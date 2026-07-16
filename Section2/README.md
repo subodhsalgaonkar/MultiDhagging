@@ -34,3 +34,16 @@ Thread.MIN_PRIORITY
 Thread.NORM_PRIORITY //default
 //and argguments from 1-10
 ```
+
+### Thread Debugginf in a IDE
+Add break points by left clicking next to line numbers
+
+
+Normally unchecked exceptions that happen in java bring down the entire thread uncless we catch them explicitly and handle them in a particular way
+
+With 
+threadObj.setUncaughtExceptionHandler() we can set an exception handler for the entire thread at it's inception
+
+This handler is called if an exception is thrown insde the thread and did not get caught anywhere
+
+In the handler we usually might clean up some resources or log additional data to trouble shoot the issue after the fact 
