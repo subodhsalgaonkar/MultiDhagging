@@ -187,3 +187,43 @@ Summary:
 - Learned to stop threads using thread.interrupt() method
 - How to handle cases when interrupt signal is not responded, we need to do it ourseleves
 - learned to prevent a thread from blocking our app from exiting by setting the thread to Daemon thread   
+
+
+
+## L3 Thread Joining
+Expand discussion on thread coordination beyond just start and stop other threads
+Learn how to gurantee that a thread upon which we depend completes it's workby the time we expect it - to gain full control over threads execution
+
+Threads coordination with Thread.join(time in ms);
+
+Why we need thread coordination?
+- Different threads run indeoendently
+- order of exec is ourside if our control
+eg. 2 threads A and B starting concurrently
++ A may start before B and completely exeucute and the B will start
++ B may start before A and completely exeucute and the A will start
++ A starts then execution switched to B then B completes then A proceeds 
++ B starts then execution switched to A then A completes then B proceeds
++ B and A run parallely on multiple cores
++ .... Many more cases
+
+What if one thread depends on the other?
+How will thread A know if thread B has completed it's execution and it's not accessing the intermediate results 
+
+Possible solution 1:
+Thread A keeps runnning a loop and keeps checking if thread B's result is ready
+***This is called Busy waiting***
+
+This will be extremely inefficient and wasteful as Thread A willburn CPU cycles just for checks thus thread A will slow down
+
+Desired solution:
+- Thread B checks and goes to sleep
+- Thread A starts and finishes it's work
+- Then thread B wakes up and get's result
+
+For the desired solution we use:
+```Java
+public void join()
+public void join(long milis, int nanos)
+public void join(long milis)
+```
