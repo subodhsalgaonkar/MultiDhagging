@@ -1,8 +1,10 @@
 package Section4;
 
+import java.util.List;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -14,11 +16,49 @@ public class ImageProcessingPerformance {
         BufferedImage originalImage = ImageIO.read(new File(SOURCE_FILE));
         BufferedImage resultImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(),  BufferedImage.TYPE_INT_RGB);
 
+        long startTime = System.currentTimeMillis();
 
-        recolorSingleThreaded(originalImage, resultImage);
+        // recolorSingleThreaded(originalImage, resultImage);
+        recolorMultithreaded(originalImage, resultImage, 1);
+        
+        long endTime = System.currentTimeMillis();
+
+        long duration = endTime - startTime;
+        System.out.println(duration);
 
         File outputFile = new File(DEST_FILE);
         ImageIO.write(resultImage, "jpg", outputFile);
+    }
+
+
+    public static void recolorMultithreaded(BufferedImage originalImage, BufferedImage resultImage, int numberOfThreads){
+        List<Thread> threads = new ArrayList<>();
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight() / numberOfThreads;
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            final int threadMultiplier = i;
+
+            Thread thread = new Thread(() -> {
+                int leftCorner = 0;
+                int rightCorner = height * threadMultiplier;
+                recolorImage(originalImage, resultImage, leftCorner, rightCorner, width, height);
+            });
+
+            threads.add(thread);
+        }
+        
+        for(Thread thread: threads){
+            thread.start();
+        }
+
+        for(Thread thread: threads){
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
